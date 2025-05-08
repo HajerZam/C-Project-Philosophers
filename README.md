@@ -245,7 +245,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 1: Read and Understand the Rules (1–2 hours)**
+### **🟣 STEP 1: Read and Understand the Rules**
 
 **Goal**: Understand what the program needs to do and what constraints you're under.
 
@@ -262,7 +262,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 2: Set Up the Basic Project Structure (1–2 hours)**
+### **🟣 STEP 2: Set Up the Basic Project Structure**
 
 **Goal**: Get the project compiling and structured.
 
@@ -278,7 +278,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 3: Parse and Validate Arguments (1–2 hours)**
+### **🟣 STEP 3: Parse and Validate Arguments**
 
 **Goal**: Safely read and store CLI arguments.
 
@@ -288,7 +288,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 4: Initialize Data and Mutexes (2–3 hours)**
+### **🟣 STEP 4: Initialize Data and Mutexes**
 
 ![image.png](attachment:23642d82-9d98-48d7-abd1-4775547d8f3e:image.png)
 
@@ -305,7 +305,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 5: Create Threads (2–4 hours)**
+### **🟣 STEP 5: Create Threads**
 
 **Goal**: Launch a thread for each philosopher.
 
@@ -321,7 +321,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 6: Add Timing and Death Check (4–6 hours)**
+### **🟣 STEP 6: Add Timing and Death Check**
 
 **Goal**: Track time and detect when a philosopher dies.
 
@@ -334,7 +334,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 7: Handle Edge Cases and Eating Count (4–6 hours)**
+### **🟣 STEP 7: Handle Edge Cases and Eating Count**
 
 **Goal**: Handle the optional argument and clean exit.
 
@@ -348,7 +348,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **🟣 STEP 8: Protect Output and Clean Up (2–3 hours)**
+### **🟣 STEP 8: Protect Output and Clean Up**
 
 **Goal**: Make output readable and free memory.
 
@@ -360,7 +360,7 @@ pthread_mutex_unlock(&fork);
 
 ---
 
-### **FINAL STEP: Test Like Crazy (Ongoing)**
+### **FINAL STEP: Test Like Crazy**
 
 - Test with:
     - 1 philosopher (should die)
