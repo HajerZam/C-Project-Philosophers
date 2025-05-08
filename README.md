@@ -1,7 +1,7 @@
 # C-Project-Philosophers
 my sevenths project in 42 . . . sometimes I wonder if this is the trenches of programming ( ;´ - `;)
 
-### Philosophers, because no one bothered to ask the waiter for extra forks
+# **Philosophers, because no one bothered to ask the waiter for extra forks**
 
 ## 1. Core Concept (Problem to Solve)
 
@@ -14,12 +14,11 @@ The challenge ahead: **Avoid [deadlock](https://www.sciencedirect.com/topics/com
 
 ## 2. Key Requirements
 
-- Create a **multithreaded program** using **mutexes** (and possibly **semaphores**).
+- Create a [**multithreaded program**](https://www.geeksforgeeks.org/multithreading-in-c/) using [**mutexes** (and possibly **semaphores**).](https://www.geeksforgeeks.org/mutex-vs-semaphore/)
 - Ensure **no deadlocks**, **no starvation** (every philosopher must get a chance to eat).
 - Each philosopher is a thread.
 - Shared resources = forks (often represented as mutexes).
 - Timing matters: You’ll simulate **thinking, eating, sleeping** using `usleep()` or similar.
-
 ---
 
 ## **3. Steps to Approach the Project**
