@@ -21,6 +21,41 @@
 # include <string.h>
 # include <limits.h>
 
+typedef struct s_data
+{
+	int				num_philos;
+	long			time_to_die;
+	long			time_to_eat;
+	long			time_to_sleep;
+	int				meals_required;
+	int				all_ate;
+	int				dead;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	death_mutex;
+	long			start_time;
+	struct s_philo	*philos;
+}	t_data;
 
+typedef struct s_philo 
+{
+	int				id;
+	int				meals_eaten;
+	long			last_meal;
+	pthread_t		thread;
+	t_data			*data;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
+}	t_philo;
+
+int		init_all(t_data *data, int argc, char **argv);
+void	*philo_routine(void *arg);
+void	start_simulation(t_data *data);
+void	cleanup(t_data *data);
+long	get_time(void);
+void	smart_sleep(long duration, t_data *data);
+void	print_action(t_philo *philo, const char *action);
+int		print_error(const char *msg);
+void	*monitor_routine(void *arg);
 
 #endif
