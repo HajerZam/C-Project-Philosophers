@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: halzamma <halzamma@student.42roma.it>      +#+  +:+       +#+        */
+/*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:05:05 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/09 14:05:05 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:06:38 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	*monitor_routine(void *arg)
 			{
 				data->dead = 1;
 				pthread_mutex_lock(&data->print_mutex);
-				printf("%ld %d died\n", now - data->start_time, data->philos[i].id);
+				printf("%ld philo %d died\n", now - data->start_time, data->philos[i].id);
 				pthread_mutex_unlock(&data->print_mutex);
 				pthread_mutex_unlock(&data->death_mutex);
 				return (NULL);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: halzamma <halzamma@student.42roma.it>      +#+  +:+       +#+        */
+/*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:57 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/08 16:10:57 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/18 14:56:07 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void	*philo_routine(void *arg)
 		pthread_mutex_unlock(first);
 		print_action(philo, "is sleeping");
 		smart_sleep(philo->data->time_to_sleep, philo->data);
+		// looping condition
 		pthread_mutex_lock(&philo->data->death_mutex);
 		is_running = (!philo->data->dead && !philo->data->all_ate);
 		pthread_mutex_unlock(&philo->data->death_mutex);
@@ -67,26 +68,26 @@ void	*philo_routine(void *arg)
 
 void	start_simulation(t_data *data)
 {
-	int         i;
+	int			i;
 	pthread_t   monitor_thread;
 
 	i = 0;
 	while (i < data->num_philos)
 	{
 		data->philos[i].last_meal = get_time();
-			if (pthread_create(&data->philos[i].thread, NULL,
-				philo_routine, &data->philos[i]) != 0)
-			{
-				print_error("Failed to create thread");
-				return ;
-			}
+		if (pthread_create(&data->philos[i].thread, NULL,
+			philo_routine, &data->philos[i]) != 0)
+		{
+			print_error("Failed to create thread");
+			return ;
+		}
 		i++;
 	}
 	if (pthread_create(&monitor_thread, NULL, monitor_routine, data) != 0)
-		{
-			print_error("Failed to create monitor thread");
-			return ;
-		}
+	{
+		print_error("Failed to create monitor thread");
+		return ;
+	}
 	pthread_detach(monitor_thread);
 	i = 0;
 	while (i < data->num_philos)

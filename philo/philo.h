@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: halzamma <halzamma@student.42roma.it>      +#+  +:+       +#+        */
+/*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:11:08 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/08 16:11:08 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/18 14:55:00 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ typedef struct s_data
 	struct s_philo	*philos;
 }	t_data;
 
-typedef struct s_philo 
+typedef struct s_philo
 {
 	int				id;
 	int				meals_eaten;
@@ -49,6 +49,8 @@ typedef struct s_philo
 }	t_philo;
 
 int		init_all(t_data *data, int argc, char **argv);
+int		is_number(char *str);
+int		ft_isdigit(char c);
 void	*philo_routine(void *arg);
 void	start_simulation(t_data *data);
 void	cleanup(t_data *data);

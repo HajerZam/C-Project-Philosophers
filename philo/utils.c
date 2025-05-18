@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: halzamma <halzamma@student.42roma.it>      +#+  +:+       +#+        */
+/*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:12:33 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/08 16:12:33 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:41:04 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	smart_sleep(long duration, t_data *data)
 		current_time = get_time();
 		if (current_time - start_time >= duration)
 			return ;
+		usleep(100);
 	}
-	usleep(100);
 }
 void	print_action(t_philo *philo, const char *action)
 {
@@ -35,7 +35,7 @@ void	print_action(t_philo *philo, const char *action)
 	if (!philo->data->dead)
 	{
 		timestamp = get_time() - philo->data->start_time;
-		printf("%ld %d %s\n", timestamp, philo->id, action);
+		printf("%ld philo %d %s\n", timestamp, philo->id, action);
 	}
 	pthread_mutex_unlock(&philo->data->death_mutex);
 	pthread_mutex_unlock(&philo->data->print_mutex);
