@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:05:05 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/17 16:06:38 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:34:41 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,20 +53,22 @@ void	*monitor_routine(void *arg)
 				pthread_mutex_unlock(&data->death_mutex);
 				return (NULL);
 			}
+			//pthread_mutex_unlock(&data->death_mutex);
+			//pthread_mutex_lock(&data->death_mutex);
+			if (data->dead)
+			{
+				pthread_mutex_unlock(&data->death_mutex);
+				return (NULL);
+			}
+			if (data->meals_required > 0 && check_all_ate(data))
+			{
+				data->all_ate = 1;
+				pthread_mutex_unlock(&data->death_mutex);
+				return (NULL);
+			}
 			pthread_mutex_unlock(&data->death_mutex);
 			i++;
-		}
-		pthread_mutex_lock(&data->death_mutex);
-		if (data->dead)
-		{
-			pthread_mutex_unlock(&data->death_mutex);
-			return (NULL);
-		}
-		if (data->meals_required > 0 && check_all_ate(data))
-		{
-			data->all_ate = 1;
-			return (NULL);
-		}
-		usleep(1000);
+			//usleep(1000);
+		}			
 	}
 }

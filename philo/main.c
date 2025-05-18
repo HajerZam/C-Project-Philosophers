@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:51 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/18 15:02:53 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:11:13 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,13 @@ int	main(int argc, char **argv)
 	if (argc == 5)
 	{
 		if (!is_number(argv[1]) || !is_number(argv[2]) 
-		|| is_number(argv[3]) || is_number(argv[4]))
+		|| !is_number(argv[3]) || !is_number(argv[4]))
 			return (print_error("Invalid arguments"));
 	}
 	else if (argc == 6)
 	{
 		if (!is_number(argv[1]) || !is_number(argv[2]) 
-		|| is_number(argv[3]) || is_number(argv[4]) || is_number(argv[5]))
+		|| !is_number(argv[3]) || !is_number(argv[4]) || !is_number(argv[5]))
 			return (print_error("Invalid arguments"));
 	}
 	if (init_all(&data, argc, argv) != 0)
