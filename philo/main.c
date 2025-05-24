@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:51 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/18 15:11:13 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/24 14:46:42 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,35 +24,33 @@ void	cleanup(t_data *data)
 {
 	int	i;
 
-	i = 0;
-	while (i < data->num_philos)
+	if (data->forks)
 	{
-		pthread_mutex_destroy(&data->forks[i]);
-		i++;
+		i = 0;
+		while (i < data->num_philos)
+			pthread_mutex_destroy(&data->forks[i++]);
+		free(data->forks);
 	}
+	if (data->philos)
+		free(data->philos);
+
 	pthread_mutex_destroy(&data->print_mutex);
 	pthread_mutex_destroy(&data->death_mutex);
-	free(data->forks);
-	free(data->philos);
 }
 
 int	main(int argc, char **argv)
 {
 	t_data	data;
+	int		i;
 
 	if (argc != 5 && argc != 6)
 		return (print_error("Invalid number of arguments"));
-	if (argc == 5)
+	i = 1;
+	while (i < argc)
 	{
-		if (!is_number(argv[1]) || !is_number(argv[2]) 
-		|| !is_number(argv[3]) || !is_number(argv[4]))
-			return (print_error("Invalid arguments"));
-	}
-	else if (argc == 6)
-	{
-		if (!is_number(argv[1]) || !is_number(argv[2]) 
-		|| !is_number(argv[3]) || !is_number(argv[4]) || !is_number(argv[5]))
-			return (print_error("Invalid arguments"));
+		if (!is_number(argv[i]))
+			return (0);
+		i++;
 	}
 	if (init_all(&data, argc, argv) != 0)
 		return (print_error("Initialization failed"));

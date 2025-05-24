@@ -1,6 +1,6 @@
 # Compiler and flags
 CC			= gcc
-CFLAGS		= -Wall -Wextra -Werror -pthread -g
+CFLAGS		= -Wall -Wextra -Werror -g -pthread
 
 # Project files
 NAME		= philo
@@ -11,7 +11,8 @@ SRCS = main.c \
 	   philo.c \
 	   monitor.c \
 	   utils.c \
-	   check_valid.c
+	   check_valid.c \
+	   philo_utils.c
 
 OBJS = $(SRCS:.c=.o)
 

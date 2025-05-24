@@ -6,26 +6,30 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:12:33 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/17 16:41:04 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/24 14:34:28 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	smart_sleep(long duration, t_data *data)
+void smart_sleep(long time_in_ms, t_data *data)
 {
-	long	start_time;
-	long	current_time;
+	long	start;
 
-	start_time = get_time();
-	while (!data->dead && !data->all_ate)
+	start = get_time();
+	while ((get_time() - start) < time_in_ms)
 	{
-		current_time = get_time();
-		if (current_time - start_time >= duration)
-			return ;
+		pthread_mutex_lock(&data->death_mutex);
+		if (data->dead)
+		{
+			pthread_mutex_unlock(&data->death_mutex);
+			break;
+		}
+		pthread_mutex_unlock(&data->death_mutex);
 		usleep(100);
 	}
 }
+
 void	print_action(t_philo *philo, const char *action)
 {
 	long	timestamp;
