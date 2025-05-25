@@ -1,377 +1,238 @@
-# C-Project-Philosophers
-my sevenths project in 42 . . . sometimes I wonder if this is the trenches of programming ( ;´ - `;)
+  
 
-# **Philosophers, because no one bothered to ask the waiter for extra forks**
-
-## 1. Core Concept (Problem to Solve)
-
-> It’s a classic concurrency problem: **Five philosophers sit around a table**, alternating between thinking and eating. They need **two forks (shared resources)** to eat, but **each fork is shared between neighbors**.
-> 
-
-The challenge ahead: **Avoid [deadlock](https://www.sciencedirect.com/topics/computer-science/deadlock#:~:text=Deadlock%20refers%20to%20a%20situation,resource%2C%20leading%20to%20a%20standstill.) and race conditions** while ensuring everyone gets to eat!
-
----
-
-## 2. Key Requirements
-
-- Create a [**multithreaded program**](https://www.geeksforgeeks.org/multithreading-in-c/) using [**mutexes** (and possibly **semaphores**).](https://www.geeksforgeeks.org/mutex-vs-semaphore/)
-- Ensure **no deadlocks**, **no starvation** (every philosopher must get a chance to eat).
-- Each philosopher is a thread.
-- Shared resources = forks (often represented as mutexes).
-- Timing matters: You’ll simulate **thinking, eating, sleeping** using `usleep()` or similar.
----
-
-## **3. Steps to Approach the Project**
-
-**Step-by-step breakdown:**
-
-1. **Parse arguments** (number of philosophers, time to die, eat, sleep, etc.)
-2. **Initialize data structures**:
-    - Philosopher structs with their own IDs, time tracking.
-    - Mutexes for forks.
-3. **Create a thread per philosopher.**
-4. **Each thread (philosopher) loops through:**
-    - Thinking
-    - Picking up left fork (`pthread_mutex_lock`)
-    - Picking up right fork
-    - Eating (track timestamp)
-    - Putting down both forks
-    - Sleeping
-5. **Monitor thread** (separate thread to check if any philosopher died).
+<h1 align="center">🍝 C-Project-Philosophers</h1>
+<p align="center"><i>My seventh project in 42. . . sometimes I wonder if this is the programming trenches ( ;´ - `;)</i></p>
+<p align="center">
+    <img src="https://img.shields.io/badge/Language-C-blue.svg" />
+    <img src="https://img.shields.io/github/languages/top/HajerZam/C-Project-Push_swap?style=flat-square" />
+    <img src="https://img.shields.io/github/repo-size/HajerZam/C-Project-Push_swap?style=flat-square" />
+    <img src="https://img.shields.io/github/last-commit/HajerZam/C-Project-Push_swap?style=flat-square" />
+    <img src="https://img.shields.io/github/issues/HajerZam/C-Project-Push_swap?style=flat-square" />
+    <img src="https://img.shields.io/badge/42-Common%20Core-critical" />
+    <img src="https://img.shields.io/badge/score-91-brightgreen?style=flat-square">
+</p>
 
 ---
 
-### **4. Critical Concepts**
+## 🧠 What’s the Problem?
 
-- **Mutex** (`pthread_mutex_t`) to protect shared resources.
-- **Thread creation** (`pthread_create`) and management.
-- **Race conditions** and **how to avoid them**.
-- **Deadlocks**: All philosophers pick up one fork and wait forever—unless you’re an immortal you need to keep it in mind?
-    - Use odd/even strategies.
-    - Limit the number of philosophers who can pick up forks simultaneously.
-- **Time handling**: precise timestamps with `gettimeofday` or `clock_gettime`.
+the infamous **Dining Philosophers Problem** — a classic in concurrent programming:
+
+> Five philosophers sit around a table. Each needs **two forks** to eat. But forks are **shared between neighbors**. They alternate between **thinking**, **eating**, and **sleeping**.
+
+Your task is to simulate this scenario using **multithreading**, avoiding:
+
+- 🔁 **Deadlocks** (e.g., everyone grabs one fork and waits forever)
+- ⚔️ **Race conditions** (two threads accessing shared data unsafely)
+- 😵 **Starvation** (a philosopher never gets to eat)
 
 ---
 
-## 5. New Functions Used
+## 🧾 Project Rules
 
-### **Memory & Output Functions**
+| Requirement | Description |
+|------------|-------------|
+| Threads | One thread per philosopher |
+| Shared Resources | Forks = Mutexes |
+| Timing | Precise delays for eating, sleeping, dying |
+| Input | CLI args:  
+`./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [meals_required]` |
+| Output | Timestamped logs of actions |
+| Death | Detect when a philosopher hasn't eaten in time |
 
-### `memset`
+---
 
-> Sets a block of memory to a specific value (like zeroing a struct).
-> 
+## 🔨 Key Concepts
+
+| Concept | Purpose |
+|--------|---------|
+| `pthread_create` | Create threads (one per philosopher) |
+| `pthread_mutex_t` | Lock/unlock forks (shared resources) |
+| `gettimeofday()` | Track precise time for actions |
+| `usleep()` | Sleep during eating and sleeping |
+| `pthread_join` / `detach` | Manage thread lifecycle |
+| `malloc` / `free` | Dynamic memory for threads, forks, etc. |
+
+---
+
+## 📁 Project Structure
 
 ```c
-memset(ptr, 0, sizeof(struct));
-
-```
-
-**Use in project:** Initialize structs or arrays cleanly to zero.
+philosophers/
+├── main.c
+├── init.c           // Data + thread setup
+├── philo.c          // Philosopher behavior
+├── monitor.c        // Death checker
+├── utils.c          // Time & print helpers
+├── Makefile
+├── philo.h          // Structs & headers
+````
 
 ---
 
-### `printf`
+## 🧬 Core Structs
 
-> Prints formatted text to the terminal.
-> 
+### `t_philo` (per philosopher)
 
 ```c
-printf("%d has taken a fork\n", id);
-
+typedef struct s_philo {
+    int             id;
+    int             meals_eaten;
+    long long       last_meal;
+    pthread_mutex_t *left_fork;
+    pthread_mutex_t *right_fork;
+    pthread_t       thread;
+    struct s_data   *data;
+} t_philo;
 ```
 
-**Use in project:** Output philosopher actions with timestamps.
-
----
-
-### `malloc` / `free`
-
-> Allocate and free dynamic memory.
-> 
+### `t_data` (global config)
 
 ```c
-philos = malloc(sizeof(t_philo) * num);
-free(philos);
-
+typedef struct s_data {
+    int             num_philos;
+    long long       time_to_die;
+    long long       time_to_eat;
+    long long       time_to_sleep;
+    int             must_eat;
+    int             dead;
+    long long       start_time;
+    pthread_mutex_t *forks;
+    pthread_mutex_t print_mutex;
+    pthread_mutex_t death_mutex;
+    t_philo         *philos;
+} t_data;
 ```
 
-**Use in project:** Allocate space for philosophers and forks dynamically.
+---
+
+## 🧩 Execution Flow
+
+Each philosopher thread loops:
+
+1. **Think**
+2. **Lock left fork**
+3. **Lock right fork**
+4. **Eat**
+5. **Unlock both forks**
+6. **Sleep**
+7. Repeat...
+
+Meanwhile, a **monitor thread** checks:
+
+* Did anyone exceed `time_to_die`?
+* Did all philosophers eat `must_eat` times?
 
 ---
 
-### `write`
+## ⚙️ Function Cheat Sheet
 
-> Lower-level function to write to a file descriptor.
-> 
+| Function                | Use                         |
+| ----------------------- | --------------------------- |
+| `pthread_mutex_init`    | Initialize forks (mutexes)  |
+| `pthread_create`        | Spawn philosopher threads   |
+| `pthread_mutex_lock`    | Lock a fork                 |
+| `gettimeofday()`        | Get current timestamp in ms |
+| `usleep()`              | Sleep precisely             |
+| `pthread_join`          | Wait for threads to finish  |
+| `pthread_mutex_destroy` | Clean up at end             |
 
-```c
-write(1, "Hello\n", 6);  // 1 = stdout
+---
 
+## 📋 Step-by-Step Plan
+
+### 1. **Parse & Validate Input**
+
+* Ensure all arguments are positive integers.
+* Handle optional `must_eat` argument.
+
+### 2. **Initialize Structs**
+
+* Create `num_philos` mutexes for forks.
+* Allocate `t_philo` array and link left/right forks.
+
+### 3. **Create Threads**
+
+* Launch `philo_routine(void *arg)` for each philosopher.
+
+### 4. **Philosopher Routine**
+
+* While no one is dead:
+
+  * Lock left + right forks
+  * Print action → "is eating"
+  * `usleep(time_to_eat)`
+  * Unlock forks
+  * Print → "is sleeping"
+  * `usleep(time_to_sleep)`
+  * Print → "is thinking"
+
+### 5. **Monitor Thread**
+
+* Constantly check:
+
+  * `current_time - last_meal >= time_to_die`
+  * If all `meals_eaten >= must_eat`
+
+### 6. **Print Output Safely**
+
+* Use `print_mutex` so logs don’t overlap.
+* Format:
+
+```bash
+[timestamp] [philo_id] is eating
 ```
 
-**Use in project:** Not often directly, but you could use it instead of `printf` if required.
+### 7. **Clean Up**
+
+* Destroy all mutexes
+* Free malloc’d memory
 
 ---
 
-### **Timing Functions**
+## 🧪 Testing Checklist
 
-### `usleep`
-
-> Sleeps for a given number of microseconds.
-> 
-
-```c
-usleep(1000);  // sleeps for 1 ms
-
-```
-
-**Use in project:** Control when a philosopher is eating/sleeping.
+* [x] 1 philosopher (should die alone 🪦)
+* [x] 5 philosophers, default case
+* [x] Even/odd numbers
+* [x] Long sleeps to test starvation
+* [x] Meals count limit
+* [x] Valgrind = 0 leaks ✅
 
 ---
 
-### `gettimeofday`
+## 🚧 Common Pitfalls
 
-> Gets the current time with microsecond precision.
-> 
-
-```c
-struct timeval tv;
-gettimeofday(&tv, NULL);
-long timestamp = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
-
-```
-
-**Use in project:** Track philosopher death timing and action logs.
+| ❌ Problem          | ✅ Solution                                  |
+| ------------------ | ------------------------------------------- |
+| Deadlocks          | Use odd/even fork order strategy            |
+| Race conditions    | Protect shared values with mutexes          |
+| Imprecise sleeping | Use `gettimeofday` + custom `smart_sleep()` |
+| Unlocked mutexes   | Always unlock after eating, even on error   |
 
 ---
 
-### **Threading Functions (The Core of Your Project)**
+## 🔍 Resources
 
-### `pthread_create`
-
-> Starts a new thread.
-> 
-
-```c
-pthread_create(&thread_id, NULL, routine_function, (void *)arg);
-
-```
-
-**Use in project:** Create a thread for each philosopher.
+* [Deadlock Explained (ScienceDirect)](https://www.sciencedirect.com/topics/computer-science/deadlock)
+* [GFG - Mutex vs Semaphore](https://www.geeksforgeeks.org/mutex-vs-semaphore/)
+* [YouTube - Dining Philosophers in C](https://www.youtube.com/watch?v=RGQe8waGJ4w)
 
 ---
 
-### `pthread_detach`
+## 🤯 Final Thoughts
 
-> Detaches a thread (cleans up automatically when it finishes).
-> 
+This project will:
 
-```c
-pthread_detach(thread_id);
+* Warp your brain with mutexes.
+* Force you to **think in threads**.
+* Test your patience with timing.
+* Teach you how to **build robust concurrency logic** from scratch.
 
-```
-
-**Use in project:** Optional; used if you don’t need to `join` a thread later.
-
----
-
-### `pthread_join`
-
-> Waits for a thread to finish.
-> 
-
-```c
-pthread_join(thread_id, NULL);
-
-```
-
-**Use in project:** Used in `main` to wait for philosopher threads.
+> Sometimes I wonder if the true philosopher is me — sitting at my desk, starving, debugging mutex deadlocks at 3am.
 
 ---
 
-### **Mutex (Mutual Exclusion) Functions**
-
-### `pthread_mutex_init` / `pthread_mutex_destroy`
-
-> Initialize and destroy a mutex (a lock).
-> 
-
-```c
-pthread_mutex_t mutex;
-pthread_mutex_init(&mutex, NULL);
-pthread_mutex_destroy(&mutex);
-
-```
-
-**Use in project:** One mutex per fork; plus maybe extra for print/death check.
-
----
-
-### `pthread_mutex_lock` / `pthread_mutex_unlock`
-
-> Lock and unlock a mutex.
-> 
-
-```c
-pthread_mutex_lock(&fork);
-pthread_mutex_unlock(&fork);
-
-```
-
-**Use in project:** Prevent two philosophers from grabbing the same fork.
-
----
-
-## TL;DR SUMMARY:
-
-| Function | Use Case in Project |
-| --- | --- |
-| `memset` | Zero out structs/arrays |
-| `printf` | Log what philosophers are doing |
-| `malloc`/`free` | Allocate/free philosophers, forks |
-| `write` | Low-level output (rare) |
-| `usleep` | Sleep for eat/sleep actions |
-| `gettimeofday` | Track timing (for death check) |
-| `pthread_create` | Start philosopher threads |
-| `pthread_detach` | Auto-clean threads (optional) |
-| `pthread_join` | Wait for philosopher threads |
-| `pthread_mutex_*` | Manage access to forks/shared data |
-
----
-
-## **STEP-BY-STEP PLAN: PHILOSOPHERS PROJECT**
-
----
-
-### **🟣 STEP 1: Read and Understand the Rules**
-
-**Goal**: Understand what the program needs to do and what constraints you're under.
-
-- Read the project subject and README of other git repos carefully.
-- Know the **arguments** the program takes:
-    
-    ```bash
-    ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
-    
-    ```
-    
-- Understand **what causes a philosopher to die** (hasn't eaten in `time_to_die` ms).
-- Read about **deadlocks and race conditions**.
-
----
-
-### **🟣 STEP 2: Set Up the Basic Project Structure**
-
-**Goal**: Get the project compiling and structured.
-
-- Create your `Makefile`.
-- Set up `.c` and `.h` files:
-    - `main.c` — handles arguments and starts the sim
-    - `init.c` — initializes structs and threads
-    - `philo.c` — philosopher behavior
-    - `utils.c` — time, printing, cleanup, etc.
-- Define structs in `philo.h`:
-    - `t_philo` (one per philosopher)
-    - `t_data` (global simulation data)
-
----
-
-### **🟣 STEP 3: Parse and Validate Arguments**
-
-**Goal**: Safely read and store CLI arguments.
-
-- Check if inputs are numbers and within range.
-- Convert strings to integers (`ft_atoi` or your own).
-- Store in `t_data` struct.
-
----
-
-### **🟣 STEP 4: Initialize Data and Mutexes**
-
-![image.png](attachment:23642d82-9d98-48d7-abd1-4775547d8f3e:image.png)
-
-**Goal**: Set up forks, philosophers, and mutexes.
-
-- Create `t_philo` array with one philosopher per thread.
-- Create one **mutex per fork** (i.e., per philosopher).
-- Assign:
-    - Left fork = own index
-    - Right fork = (index + 1) % N
-- Also initialize:
-    - A mutex for printing
-    - A mutex for accessing the death flag or eating checks
-
----
-
-### **🟣 STEP 5: Create Threads**
-
-**Goal**: Launch a thread for each philosopher.
-
-- `pthread_create` → start `philo_routine(void *arg)` for each.
-- Inside the routine:
-    - Think
-    - Take forks (`pthread_mutex_lock`)
-    - Eat (`usleep`)
-    - Release forks
-    - Sleep
-    - Repeat
-- Use `pthread_join` in `main.c` to wait for all threads.
-
----
-
-### **🟣 STEP 6: Add Timing and Death Check**
-
-**Goal**: Track time and detect when a philosopher dies.
-
-- Store `last_meal_time` in each philosopher.
-- Create a **monitor thread**:
-    - Loops checking time since each philosopher ate
-    - If time exceeds `time_to_die`, set `dead = true` and exit
-- Use `gettimeofday()` or `clock_gettime()` to track timestamps (in milliseconds).
-- Protect shared data with mutexes.
-
----
-
-### **🟣 STEP 7: Handle Edge Cases and Eating Count**
-
-**Goal**: Handle the optional argument and clean exit.
-
-- Optional 5th argument: stop simulation once every philosopher eats `N` times.
-- Track each philosopher’s meal count.
-- Monitor thread also checks if all have eaten enough.
-- Handle:
-    - Only 1 philosopher (special case — no eating possible, just dies).
-    - Even/odd number of philosophers to avoid deadlocks.
-    - Sleep accurately (use custom `smart_sleep()` for busy-wait).
-
----
-
-### **🟣 STEP 8: Protect Output and Clean Up**
-
-**Goal**: Make output readable and free memory.
-
-- Use a mutex around `printf` calls to avoid scrambled text.
-- Clean up all:
-    - Threads (`pthread_join`)
-    - Mutexes (`pthread_mutex_destroy`)
-    - Allocated memory
-
----
-
-### **FINAL STEP: Test Like Crazy**
-
-- Test with:
-    - 1 philosopher (should die)
-    - 5 philosophers
-    - Different time intervals
-    - Optional argument
-- Use valgrind to check for leaks:
-    
-    ```bash
-    valgrind ./philo 5 800 200 200
-    
-    ```
-    
+<p align="center"><i>May all your philosophers eat, and none die in vain.</i> 🥄</p>
 
 ---
