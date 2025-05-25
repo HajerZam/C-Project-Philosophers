@@ -4,12 +4,12 @@
 <p align="center"><i>My seventh project in 42. . . sometimes I wonder if this is the programming trenches ( ;´ - `;)</i></p>
 <p align="center">
     <img src="https://img.shields.io/badge/Language-C-blue.svg" />
-    <img src="https://img.shields.io/github/languages/top/HajerZam/C-Project-Push_swap?style=flat-square" />
-    <img src="https://img.shields.io/github/repo-size/HajerZam/C-Project-Push_swap?style=flat-square" />
-    <img src="https://img.shields.io/github/last-commit/HajerZam/C-Project-Push_swap?style=flat-square" />
-    <img src="https://img.shields.io/github/issues/HajerZam/C-Project-Push_swap?style=flat-square" />
+    <img src="https://img.shields.io/github/languages/top/HajerZam/C-Project-Philosophers?style=flat-square" />
+    <img src="https://img.shields.io/github/repo-size/HajerZam/C-Project-Philosophers?style=flat-square" />
+    <img src="https://img.shields.io/github/last-commit/HajerZam/C-Project-Philosophers?style=flat-square" />
+    <img src="https://img.shields.io/github/issues/HajerZam/C-Project-Philosophers?style=flat-square" />
     <img src="https://img.shields.io/badge/42-Common%20Core-critical" />
-    <img src="https://img.shields.io/badge/score-91-brightgreen?style=flat-square">
+    <img src="https://img.shields.io/badge/score-??-brightgreen?style=flat-square">
 </p>
 
 ---
