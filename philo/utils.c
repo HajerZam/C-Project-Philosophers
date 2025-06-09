@@ -6,13 +6,13 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:12:33 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/24 14:34:28 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/05/28 15:09:29 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void smart_sleep(long time_in_ms, t_data *data)
+void	smart_sleep(long time_in_ms, t_data *data)
 {
 	long	start;
 
@@ -23,10 +23,10 @@ void smart_sleep(long time_in_ms, t_data *data)
 		if (data->dead)
 		{
 			pthread_mutex_unlock(&data->death_mutex);
-			break;
+			break ;
 		}
 		pthread_mutex_unlock(&data->death_mutex);
-		usleep(100);
+		usleep(500);
 	}
 }
 

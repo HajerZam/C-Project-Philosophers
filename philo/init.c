@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:39 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/24 14:53:08 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/03 11:36:04 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	ft_atoi(const char *str)
 	while (*str >= '0' && *str <= '9')
 	{
 		num = num * 10 + (*str++ - '0');
-		if ((sign == 1 && num > INT_MAX) || (sign == -1 && -num < INT_MIN))
+		if ((sign == 1 && num > INT_MAX) || (sign == -1 && - num < INT_MIN))
 			return (0);
 	}
 	return ((int)(num * sign));
@@ -78,10 +78,12 @@ static int	init_philosophers(t_data *data)
 		data->philos[i].data = data;
 		data->philos[i].left_fork = &data->forks[i];
 		data->philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
+		pthread_mutex_init(&data->philos[i].meal_mutex, NULL);
 		i++;
 	}
 	return (0);
 }
+
 int	init_all(t_data *data, int argc, char **argv)
 {
 	memset(data, 0, sizeof(t_data));
@@ -89,21 +91,20 @@ int	init_all(t_data *data, int argc, char **argv)
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
-	data->meals_required = (argc == 6) ? ft_atoi(argv[5]) : -1;
+	if (argc == 6)
+		data->meals_required = ft_atoi(argv[5]);
+	else
+		data->meals_required = -1;
 	data->all_ate = 0;
 	data->dead = 0;
-
 	if (data->num_philos <= 0 || data->time_to_die < 0
 		|| data->time_to_eat < 0 || data->time_to_sleep < 0
 		|| (argc == 6 && data->meals_required <= 0))
 		return (1);
-
 	if (init_mutexes(data) != 0)
 		return (1);
-
 	if (init_philosophers(data) != 0)
 		return (1);
-
 	data->start_time = get_time();
 	return (0);
 }

@@ -7,6 +7,7 @@ NAME		= philo
 
 # Source files
 SRCS = main.c \
+       sim.c\
 	   init.c \
 	   philo.c \
 	   monitor.c \

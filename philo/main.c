@@ -6,11 +6,9 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:51 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/24 14:46:42 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/03 11:32:24 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "philo.h"
 
 #include "philo.h"
 
@@ -33,7 +31,6 @@ void	cleanup(t_data *data)
 	}
 	if (data->philos)
 		free(data->philos);
-
 	pthread_mutex_destroy(&data->print_mutex);
 	pthread_mutex_destroy(&data->death_mutex);
 }
