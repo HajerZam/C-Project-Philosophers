@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: halzamma <halzamma@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:05:05 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/03 16:27:20 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/10 16:15:10 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,13 @@ int	check_all_ate(t_data *data)
 	i = 0;
 	while (i < data->num_philos)
 	{
+		pthread_mutex_lock(&data->philos[i].meal_mutex);
 		if (data->philos[i].meals_eaten < data->meals_required)
+		{
+			pthread_mutex_unlock(&data->philos[i].meal_mutex);
 			return (0);
+		}
+		pthread_mutex_unlock(&data->philos[i].meal_mutex);
 		i++;
 	}
 	return (1);
