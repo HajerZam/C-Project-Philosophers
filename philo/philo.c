@@ -3,40 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
+/*   By: halzamma <halzamma@student.42roma.it>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:57 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/03 16:30:30 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/10 15:08:42 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	*one_philo_routine(void *arg)
-{
-	t_philo	*philo;
-
-	philo = (t_philo *)arg;
-	print_action(philo, "is thinking");
-	pthread_mutex_lock(philo->left_fork);
-	print_action(philo, "has taken a fork");
-	smart_sleep(philo->data->time_to_die, philo->data);
-	pthread_mutex_lock(&philo->data->print_mutex);
-	printf("%ld %d died\n", get_time() - philo->data->start_time, philo->id);
-	pthread_mutex_unlock(&philo->data->print_mutex);
-	pthread_mutex_unlock(philo->left_fork);
-	return (NULL);
-}
-
-void	philo_take_forks(t_philo *philo,
-	pthread_mutex_t *first, pthread_mutex_t *second)
-{
-	get_ordered_forks(philo, &first, &second);
-	pthread_mutex_lock(first);
-	print_action(philo, "has taken a fork");
-	pthread_mutex_lock(second);
-	print_action(philo, "has taken a fork");
-}
 
 static int	run_and_think(t_philo *philo)
 {
@@ -48,6 +22,40 @@ static int	run_and_think(t_philo *philo)
 	if (!is_running)
 		return (0);
 	print_action(philo, "is thinking");
+	return (1);
+}
+
+static int	philo_check_and_lock_first(t_philo *philo, pthread_mutex_t **first)
+{
+	get_ordered_forks(philo, first, NULL);
+	pthread_mutex_lock(*first);
+	print_action(philo, "has taken a fork");
+	pthread_mutex_lock(&philo->data->death_mutex);
+	if (philo->data->dead)
+	{
+		pthread_mutex_unlock(*first);
+		pthread_mutex_unlock(&philo->data->death_mutex);
+		return (0);
+	}
+	pthread_mutex_unlock(&philo->data->death_mutex);
+	return (1);
+}
+
+static int	philo_check_and_lock_second(t_philo *philo,
+	pthread_mutex_t *first, pthread_mutex_t **second)
+{
+	get_ordered_forks(philo, NULL, second);
+	pthread_mutex_lock(*second);
+	print_action(philo, "has taken a fork");
+	pthread_mutex_lock(&philo->data->death_mutex);
+	if (philo->data->dead)
+	{
+		pthread_mutex_unlock(*second);
+		pthread_mutex_unlock(first);
+		pthread_mutex_unlock(&philo->data->death_mutex);
+		return (0);
+	}
+	pthread_mutex_unlock(&philo->data->death_mutex);
 	return (1);
 }
 
@@ -74,10 +82,8 @@ void	*philo_routine(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->data->num_philos > 2)
 		smart_sleep((philo->id - 1) * 20, philo->data);
-	while (1)
+	while (run_and_think(philo))
 	{
-		if (!run_and_think(philo))
-			break ;
 		pthread_mutex_lock(&philo->data->death_mutex);
 		if (philo->data->dead)
 		{
@@ -85,28 +91,10 @@ void	*philo_routine(void *arg)
 			break ;
 		}
 		pthread_mutex_unlock(&philo->data->death_mutex);
-		get_ordered_forks(philo, &first, &second);
-		pthread_mutex_lock(first);
-		print_action(philo, "has taken a fork");
-		pthread_mutex_lock(&philo->data->death_mutex);
-		if (philo->data->dead)
-		{
-			pthread_mutex_unlock(first);
-			pthread_mutex_unlock(&philo->data->death_mutex);
+		if (!philo_check_and_lock_first(philo, &first))
 			break ;
-		}
-		pthread_mutex_unlock(&philo->data->death_mutex);
-		pthread_mutex_lock(second);
-		print_action(philo, "has taken a fork");
-		pthread_mutex_lock(&philo->data->death_mutex);
-		if (philo->data->dead)
-		{
-			pthread_mutex_unlock(second);
-			pthread_mutex_unlock(first);
-			pthread_mutex_unlock(&philo->data->death_mutex);
+		if (!philo_check_and_lock_second(philo, first, &second))
 			break ;
-		}
-		pthread_mutex_unlock(&philo->data->death_mutex);
 		eating_meal(philo, first, second);
 	}
 	return (NULL);
