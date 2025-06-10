@@ -76,9 +76,8 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-             smart_sleep(10, philo->data);
-        else
-             smart_sleep(20, philo->data);	while (1)
+		smart_sleep((philo->id - 1) * 20, philo->data);
+        while (1)
 	{
 		if (!run_and_think(philo))
 			break ;
