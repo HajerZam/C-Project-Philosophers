@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:12:33 by halzamma          #+#    #+#             */
-/*   Updated: 2025/05/28 15:09:29 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 14:17:30 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@
 void	smart_sleep(long time_in_ms, t_data *data)
 {
 	long	start;
+	long	now;
 
 	start = get_time();
-	while ((get_time() - start) < time_in_ms)
+	while (1)
 	{
 		pthread_mutex_lock(&data->death_mutex);
 		if (data->dead)
@@ -26,7 +27,10 @@ void	smart_sleep(long time_in_ms, t_data *data)
 			break ;
 		}
 		pthread_mutex_unlock(&data->death_mutex);
-		usleep(500);
+		now = get_time();
+		if ((now - start) >= time_in_ms)
+			break ;
+		usleep(1000);
 	}
 }
 

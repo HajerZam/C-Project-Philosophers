@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 14:45:19 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/03 11:42:40 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 14:03:13 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ static int	create_threads(t_data *data)
 	i = 0;
 	while (i < data->num_philos)
 	{
-		data->philos[i].last_meal = get_time();
 		if (pthread_create(&data->philos[i].thread, NULL,
 				philo_routine, &data->philos[i]) != 0)
 		{
@@ -49,8 +48,12 @@ void	start_simulation(t_data *data)
 
 	if (data->num_philos == 1)
 	{
-		pthread_create(&data->philos[0].thread, NULL,
-			one_philo_routine, &data->philos[0]);
+		if (pthread_create(&data->philos[0].thread, NULL,
+				one_philo_routine, &data->philos[0]) != 0)
+		{
+			print_error("Failed to create thread");
+			return ;
+		}
 		pthread_join(data->philos[0].thread, NULL);
 		return ;
 	}

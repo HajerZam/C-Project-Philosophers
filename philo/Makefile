@@ -1,6 +1,6 @@
 # Compiler and flags
 CC			= gcc
-CFLAGS		= -Wall -Wextra -Werror -g -pthread
+CFLAGS		= -Wall -Wextra -Werror -g -gdwarf-2 -pthread
 
 # Project files
 NAME		= philo

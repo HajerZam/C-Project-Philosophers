@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:11:08 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/03 11:34:58 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 13:23:22 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,11 @@ int		is_number(char *str);
 int		ft_isdigit(char c);
 void	*philo_routine(void *arg);
 void	start_simulation(t_data *data);
+void	eating_meal(
+			t_philo *philo,
+			pthread_mutex_t *first,
+			pthread_mutex_t *second);
+
 void	get_ordered_forks(
 			t_philo *philo,
 			pthread_mutex_t **first,
@@ -65,6 +70,7 @@ void	philo_take_forks(
 			pthread_mutex_t *second);
 
 void	cleanup(t_data *data);
+int		take_forks_and_eat(t_philo *philo);
 long	get_time(void);
 void	smart_sleep(long duration, t_data *data);
 void	print_action(t_philo *philo, const char *action);

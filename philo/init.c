@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:39 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/03 11:36:04 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 14:01:16 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static int	init_philosophers(t_data *data)
 	{
 		data->philos[i].id = i + 1;
 		data->philos[i].meals_eaten = 0;
-		data->philos[i].last_meal = 0;
+		data->philos[i].last_meal = data->start_time;
 		data->philos[i].data = data;
 		data->philos[i].left_fork = &data->forks[i];
 		data->philos[i].right_fork = &data->forks[(i + 1) % data->num_philos];
@@ -101,10 +101,10 @@ int	init_all(t_data *data, int argc, char **argv)
 		|| data->time_to_eat < 0 || data->time_to_sleep < 0
 		|| (argc == 6 && data->meals_required <= 0))
 		return (1);
+	data->start_time = get_time();
 	if (init_mutexes(data) != 0)
 		return (1);
 	if (init_philosophers(data) != 0)
 		return (1);
-	data->start_time = get_time();
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: halzamma <halzamma@student.42roma.it>      +#+  +:+       +#+        */
+/*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:05:05 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/10 16:15:10 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 14:17:21 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,6 @@ void	*monitor_routine(void *arg)
 				return (NULL);
 			i++;
 		}
-		usleep(1000);
+		usleep(100);
 	}
 }
