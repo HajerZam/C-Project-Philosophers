@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 14:21:16 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/14 13:19:46 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 15:04:59 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,19 +27,16 @@ void	get_ordered_forks(
 	}
 }
 
-static int	check_and_unlock(t_philo *philo, pthread_mutex_t *to_unlock)
+static int	check_simulation_status(t_philo *philo)
 {
 	int	dead;
+	int	all_ate;
 
 	pthread_mutex_lock(&philo->data->death_mutex);
 	dead = philo->data->dead;
+	all_ate = philo->data->all_ate;
 	pthread_mutex_unlock(&philo->data->death_mutex);
-	if (dead)
-	{
-		pthread_mutex_unlock(to_unlock);
-		return (1);
-	}
-	return (0);
+	return (dead || all_ate);
 }
 
 int	take_forks_and_eat(t_philo *philo)
@@ -48,14 +45,20 @@ int	take_forks_and_eat(t_philo *philo)
 	pthread_mutex_t	*second;
 
 	get_ordered_forks(philo, &first, &second);
+	if (check_simulation_status(philo))
+		return (0);
 	pthread_mutex_lock(first);
 	print_action(philo, "has taken a fork");
-	if (check_and_unlock(philo, first))
+	if (check_simulation_status(philo))
+	{
+		pthread_mutex_unlock(first);
 		return (0);
+	}
 	pthread_mutex_lock(second);
 	print_action(philo, "has taken a fork");
-	if (check_and_unlock(philo, second))
+	if (check_simulation_status(philo))
 	{
+		pthread_mutex_unlock(second);
 		pthread_mutex_unlock(first);
 		return (0);
 	}

@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 14:05:05 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/14 14:17:21 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 14:58:20 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,12 @@ static int	check_death(t_data *data, int i, long now)
 static int	check_meals(t_data *data)
 {
 	pthread_mutex_lock(&data->death_mutex);
-	if (data->dead || (data->meals_required > 0 && check_all_ate(data)))
+	if (data->dead)
+	{
+		pthread_mutex_unlock(&data->death_mutex);
+		return (1);
+	}
+	if (data->meals_required > 0 && check_all_ate(data))
 	{
 		data->all_ate = 1;
 		pthread_mutex_unlock(&data->death_mutex);
@@ -81,13 +86,13 @@ void	*monitor_routine(void *arg)
 	data = (t_data *)arg;
 	while (1)
 	{
+		if (check_meals(data))
+			return (NULL);
 		now = get_time();
 		i = 0;
 		while (i < data->num_philos)
 		{
 			if (check_death(data, i, now))
-				return (NULL);
-			if (check_meals(data))
 				return (NULL);
 			i++;
 		}

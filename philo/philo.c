@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:57 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/14 13:49:07 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/16 14:49:25 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-		smart_sleep((philo->id - 1) * 20, philo->data);
+		usleep(100);
 	while (1)
 	{
 		if (!run_and_think(philo))
@@ -91,6 +91,7 @@ void	*philo_routine(void *arg)
 		pthread_mutex_unlock(&philo->data->death_mutex);
 		if (!take_forks_and_eat(philo))
 			break ;
+		usleep(1000);
 	}
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: halzamma <halzamma@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 16:10:51 by halzamma          #+#    #+#             */
-/*   Updated: 2025/06/03 11:32:24 by halzamma         ###   ########.fr       */
+/*   Updated: 2025/06/14 14:58:47 by halzamma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,12 @@ void	cleanup(t_data *data)
 		free(data->forks);
 	}
 	if (data->philos)
+	{
+		i = 0;
+		while (i < data->num_philos)
+			pthread_mutex_destroy(&data->philos[i++].meal_mutex);
 		free(data->philos);
+	}
 	pthread_mutex_destroy(&data->print_mutex);
 	pthread_mutex_destroy(&data->death_mutex);
 }
