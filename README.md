@@ -9,7 +9,7 @@
     <img src="https://img.shields.io/github/last-commit/HajerZam/C-Project-Philosophers?style=flat-square" />
     <img src="https://img.shields.io/github/issues/HajerZam/C-Project-Philosophers?style=flat-square" />
     <img src="https://img.shields.io/badge/42-Common%20Core-critical" />
-    <img src="https://img.shields.io/badge/score-00-brightgreen?style=flat-square">
+    <img src="https://img.shields.io/badge/score-100-brightgreen?style=flat-square">
 </p>
 
 ---
